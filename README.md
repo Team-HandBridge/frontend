@@ -1,108 +1,90 @@
 # DALM Frontend
 
-AI 기반 사진 매칭 서비스 **DALM**의 Flutter 프론트엔드 레포지토리입니다.
+서로 다른 사람의 사진에서 우연히 닮은 순간을 발견하고, 한 장의 엽서를 주고받는 AI 사진 매칭 앱의 Flutter 클라이언트입니다.
 
----
+## 개발 환경
 
-## 🛠 Tech Stack
+- Flutter 3.47.1 (stable)
+- Dart 3.13.1
+- Android / iOS
+- 앱 이름: `DALM`
+- Bundle ID / Application ID: `com.goodshot.dalm`
+- 상태 관리 및 의존성 주입: Riverpod
+- 구조: Feature-first Clean Architecture + MVVM
 
-* **Framework** : Flutter
-* **Language** : Dart
-* **Architecture** : MVVM
+Flutter 버전은 `.fvmrc`에 고정합니다. FVM을 사용하지 않는 경우에도 팀원이 동일한 Flutter 버전을 설치해 주세요.
 
-> 상태 관리 및 네트워크 관련 라이브러리는 추후 기술 선정에 따라 추가합니다.
+```bash
+flutter --version
+flutter pub get
+flutter run
+```
 
----
-
-## 📂 Project Structure
-
-기능별로 디렉토리를 분리하고 각 기능 내부에서 MVVM 구조를 적용합니다.
+## 프로젝트 구조
 
 ```text
 lib/
-├── main.dart
-│
-├── core/                   # 앱 전역 공통 기능
-│   ├── theme/
-│   ├── network/
-│   └── utils/
-│
-├── features/               # 기능별 화면 및 로직
-│   ├── onboarding/
-│   │   ├── view/
-│   │   └── viewmodel/
-│   │
-│   ├── auth/
-│   │   ├── view/
-│   │   └── viewmodel/
-│   │
-│   ├── home/
-│   │   ├── view/
-│   │   └── viewmodel/
-│   │
-│   ├── moment/
-│   │   ├── view/
-│   │   └── viewmodel/
-│   │
-│   ├── postcard/
-│   │   ├── view/
-│   │   └── viewmodel/
-│   │
-│   └── mypage/
-│       ├── view/
-│       └── viewmodel/
-│
-└── shared/
-    └── widgets/            # 공통 UI 컴포넌트
+├── app/                         # 앱 진입점, 라우팅, 전역 테마
+├── core/                        # 기능에 종속되지 않는 공통 코드
+└── features/
+    └── photo/                   # 기능별 Clean Architecture 예시
+        ├── data/
+        │   ├── datasources/
+        │   ├── dtos/
+        │   ├── mappers/
+        │   └── repositories/
+        ├── domain/
+        │   ├── entities/
+        │   ├── repositories/
+        │   └── usecases/
+        └── presentation/
+            ├── states/
+            ├── view_models/
+            ├── views/
+            └── widgets/
 ```
 
-> 프로젝트 구조는 개발 진행 과정에서 변경될 수 있습니다.
+상세한 레이어 책임과 의존성 규칙은 [docs/architecture.md](docs/architecture.md)를 참고하세요.
 
----
+## 디자인 시스템
 
-## 📱 Features
+- `DalmPalette`: Figma에서 추출한 원시 색상. 테마 구성 외 화면에서 직접 사용하지 않습니다.
+- `DalmColors`: `textPrimary`, `primaryAction`처럼 역할을 나타내는 의미 기반 색상입니다.
+- `DalmTypography`: Inter 기반 UI 서체와 Noto Serif KR 기반 감성 문구 스타일입니다.
+- 폰트 파일과 라이선스는 `assets/fonts/`에서 관리합니다.
 
-| 기능         | 설명                     |
-| ---------- | ---------------------- |
-| Onboarding | 앱 소개 및 시작              |
-| Auth       | 카카오 로그인, 약관 동의, 프로필 설정 |
-| Home       | 오늘의 사진 등록 및 매칭 상태 확인   |
-| Moment     | 탐색 중 / 발견 / 지나간 순간 조회  |
-| Postcard   | 받은 엽서 / 보낸 엽서 / 엽서 작성  |
-| MyPage     | 프로필 및 앱 설정             |
+## 브랜치 전략
 
----
+- `main`: 배포 가능한 안정 버전
+- `develop`: 다음 배포를 위한 통합 개발 브랜치
+- `feature/{기능명}`: 기능 작업 브랜치. `develop`에서 생성하고 `develop`으로 PR을 보냅니다.
 
-## 📖 Convention
+```bash
+git switch develop
+git pull origin develop
+git switch -c feature/photo-upload
+```
 
-### 🌱 Git Branch
+## 커밋 규칙
 
-* `main` : 배포 브랜치
-* `develop` : 개발 브랜치
-* `feature/{기능명}` : 새로운 기능 개발을 위한 브랜치
+| 타입 | 용도 |
+| --- | --- |
+| `feat` | 새로운 기능 |
+| `fix` | 버그 수정 |
+| `refactor` | 기능 변화 없는 구조 개선 |
+| `design` | UI 및 디자인 변경 |
+| `docs` | 문서 변경 |
+| `test` | 테스트 추가 또는 수정 |
+| `chore` | 빌드, 설정, 의존성 변경 |
 
-### 💬 Commit Message
+예: `feat: 사진 업로드 화면 구현`
 
-| Type       | Description          |
-| ---------- | -------------------- |
-| `feat`     | 새로운 기능 추가            |
-| `fix`      | 버그 수정                |
-| `refactor` | 코드 리팩토링              |
-| `style`    | 코드 스타일 변경 (기능 변경 없음) |
-| `design`   | UI 디자인 변경            |
-| `docs`     | 문서 수정                |
-| `chore`    | 빌드 및 설정 변경           |
-| `test`     | 테스트 코드 작성            |
+## 기본 검증
 
----
+PR을 올리기 전에 아래 명령을 통과시킵니다.
 
-## 📝 Code Convention
-
-| 대상       | 규칙         | 예시                    |
-| -------- | ---------- | --------------------- |
-| Class    | PascalCase | `HomeViewModel`       |
-| Widget   | PascalCase | `MomentCard`          |
-| Function | camelCase  | `loadTodayPhoto()`    |
-| Variable | camelCase  | `userName`            |
-| File     | snake_case | `home_screen.dart`    |
-| Folder   | snake_case | `features/onboarding` |
+```bash
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test
+```
