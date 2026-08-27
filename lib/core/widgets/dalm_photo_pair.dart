@@ -2,8 +2,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import '../../../app/theme/dalm_colors.dart';
-import '../../../app/theme/dalm_typography.dart';
+import '../../app/theme/dalm_colors.dart';
+import '../../app/theme/dalm_typography.dart';
 
 enum DalmPhotoPairStatus { searching, hidden, revealed }
 
@@ -25,17 +25,51 @@ class DalmPhotoPair extends StatelessWidget {
   static const double _imageAspectRatio = 3 / 4; // 사진 가로, 세로 비율
   static const double _gap = 8;
   static const double _borderRadius = 6;
+  static const double _connectorWidth = 14;
+  static const double _connectorLineHeight = 1;
+  static const double _connectorDotSize = 6;
 
   // dalm_photo_pair widget
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      alignment: Alignment.center,
       children: [
-        Expanded(child: _buildFrame(_buildImage(leftImage))),
-        const SizedBox(width: _gap),
-        Expanded(child: _buildFrame(_buildRightContent())),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: _buildFrame(_buildImage(leftImage))),
+            const SizedBox(width: _gap),
+            Expanded(child: _buildFrame(_buildRightContent())),
+          ],
+        ),
+        _buildConnector(),
       ],
+    );
+  }
+
+  Widget _buildConnector() {
+    return SizedBox(
+      width: _connectorWidth,
+      height: _connectorDotSize,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: _connectorWidth,
+            height: _connectorLineHeight,
+            color: DalmColors.emotionalAccent,
+          ),
+          Container(
+            width: _connectorDotSize,
+            height: _connectorDotSize,
+            decoration: const BoxDecoration(
+              color: DalmColors.emotionalAccent,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
