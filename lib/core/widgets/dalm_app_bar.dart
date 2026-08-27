@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../app/theme/dalm_colors.dart';
-import '../../../app/theme/dalm_typography.dart';
+import '../../app/theme/dalm_colors.dart';
+import '../../app/theme/dalm_typography.dart';
 
 class DalmAppBar extends StatelessWidget implements PreferredSizeWidget {
   const DalmAppBar({
