@@ -16,7 +16,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       ...authRootRoutes,
       ...homeRoutes,
-      ...momentRoutes,
+      ...momentShellRoutes,
+      ...momentRootRoutes,
       ...postcardShellRoutes,
       ...postcardRootRoutes,
       ...profileShellRoutes,
