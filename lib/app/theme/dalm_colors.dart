@@ -16,6 +16,7 @@ abstract final class DalmColors {
   static const navigationInactive = DalmPalette.stone;
 
   static const primaryAction = DalmPalette.deepInk;
+  static const accentAction = DalmPalette.amber;
   static const secondaryAction = DalmPalette.slateBlue;
   static const emotionalAccent = DalmPalette.gold;
   static const searching = DalmPalette.amber;
