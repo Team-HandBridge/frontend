@@ -12,6 +12,7 @@ abstract final class DalmColors {
   static const textDisabled = DalmPalette.disabled;
   static const textInverse = DalmPalette.white;
   static const border = DalmPalette.border;
+  static const navigationInactive = DalmPalette.stone;
 
   static const primaryAction = DalmPalette.deepInk;
   static const secondaryAction = DalmPalette.slateBlue;

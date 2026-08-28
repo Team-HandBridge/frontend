@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../app/theme/dalm_colors.dart';
 import '../../app/theme/dalm_typography.dart';
@@ -17,10 +18,22 @@ class DalmBottomNavigationBar extends StatelessWidget {
   final ValueChanged<int> onTap;
 
   static const List<_DalmBottomNavigationItem> _items = [
-    _DalmBottomNavigationItem(label: '오늘', icon: Icons.home_outlined),
-    _DalmBottomNavigationItem(label: '순간들', icon: Icons.article_outlined),
-    _DalmBottomNavigationItem(label: '엽서함', icon: Icons.mail_outline),
-    _DalmBottomNavigationItem(label: '나', icon: Icons.person_outline),
+    _DalmBottomNavigationItem(
+      label: '오늘',
+      assetPath: 'assets/icons/nav_home.svg',
+    ),
+    _DalmBottomNavigationItem(
+      label: '순간들',
+      assetPath: 'assets/icons/nav_moments.svg',
+    ),
+    _DalmBottomNavigationItem(
+      label: '엽서함',
+      assetPath: 'assets/icons/nav_postcards.svg',
+    ),
+    _DalmBottomNavigationItem(
+      label: '나',
+      assetPath: 'assets/icons/nav_profile.svg',
+    ),
   ];
 
   @override
@@ -48,7 +61,7 @@ class DalmBottomNavigationBar extends StatelessWidget {
 
     final color = isSelected
         ? DalmColors.textPrimary
-        : DalmColors.textSecondary;
+        : DalmColors.navigationInactive;
 
     return Expanded(
       child: Semantics(
@@ -61,13 +74,21 @@ class DalmBottomNavigationBar extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(item.icon, size: 26, color: color),
-                const SizedBox(height: 6),
+                SizedBox.square(
+                  dimension: 24,
+                  child: Center(
+                    child: SvgPicture.asset(
+                      item.assetPath,
+                      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 Text(
                   item.label,
                   style: DalmTypography.caption.copyWith(
                     color: color,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    height: 1,
                   ),
                 ),
               ],
@@ -80,8 +101,11 @@ class DalmBottomNavigationBar extends StatelessWidget {
 }
 
 class _DalmBottomNavigationItem {
-  const _DalmBottomNavigationItem({required this.label, required this.icon});
+  const _DalmBottomNavigationItem({
+    required this.label,
+    required this.assetPath,
+  });
 
   final String label;
-  final IconData icon;
+  final String assetPath;
 }
