@@ -10,22 +10,33 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'app_routes.dart';
+import 'dalm_navigation_shell.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
+      // 바텀 네비게이션 없이 열리는 화면
       ...authRootRoutes,
-      ...homeRoutes,
-      ...momentShellRoutes,
       ...momentRootRoutes,
-      ...postcardShellRoutes,
       ...postcardRootRoutes,
-      ...profileShellRoutes,
       ...profileRootRoutes,
       ...photoRootRoutes,
       ...matchRootRoutes,
       ...safetyRootRoutes,
+
+      // 바텀 네비게이션이 있는 화면
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return DalmNavigationShell(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(routes: homeShellRoutes),
+          StatefulShellBranch(routes: momentShellRoutes),
+          StatefulShellBranch(routes: postcardShellRoutes),
+          StatefulShellBranch(routes: profileShellRoutes),
+        ],
+      ),
     ],
   );
 
