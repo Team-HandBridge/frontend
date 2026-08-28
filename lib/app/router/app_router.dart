@@ -1,3 +1,4 @@
+import 'package:dalm/features/auth/presentation/routes/auth_routes.dart';
 import 'package:dalm/features/home/presentation/routes/home_routes.dart';
 import 'package:dalm/features/match/presentation/routes/match_routes.dart';
 import 'package:dalm/features/moment/presentation/routes/moment_routes.dart';
@@ -13,6 +14,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
+      ...authRootRoutes,
       ...homeRoutes,
       ...momentRoutes,
       ...postcardShellRoutes,
