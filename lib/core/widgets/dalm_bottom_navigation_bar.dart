@@ -39,7 +39,7 @@ class DalmBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: DalmColors.background,
+      color: DalmColors.navigationBackground,
       child: DecoratedBox(
         decoration: const BoxDecoration(
           border: Border(top: BorderSide(color: DalmColors.border, width: 1)),
