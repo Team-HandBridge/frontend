@@ -36,10 +36,17 @@ final tokenRefresherProvider = Provider<TokenRefresher>((ref) {
 
 final dioProvider = Provider<Dio>((ref) {
   final tokenStorage = ref.watch(tokenStorageProvider);
+  final tokenRefresher = ref.watch(tokenRefresherProvider);
 
   final dio = Dio(_createBaseOptions());
 
-  dio.interceptors.add(AuthInterceptor(tokenStorage));
+  dio.interceptors.add(
+    AuthInterceptor(
+      dio: dio,
+      tokenStorage: tokenStorage,
+      tokenRefresher: tokenRefresher,
+    ),
+  );
 
   ref.onDispose(dio.close);
 

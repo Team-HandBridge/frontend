@@ -1,13 +1,25 @@
 import 'package:dio/dio.dart';
 
 import '../../storage/token_storage.dart';
+import '../auth/token_refresher.dart';
 
 final class AuthInterceptor extends Interceptor {
-  AuthInterceptor(this._tokenStorage);
+  AuthInterceptor({
+    required Dio dio,
+    required TokenStorage tokenStorage,
+    required TokenRefresher tokenRefresher,
+  }) : _dio = dio,
+       _tokenStorage = tokenStorage,
+       _tokenRefresher = tokenRefresher;
 
+  final Dio _dio;
   final TokenStorage _tokenStorage;
+  final TokenRefresher _tokenRefresher;
 
   static const requiresAuthKey = 'requiresAuth';
+  static const retryAttemptedKey = 'authRetryAttempted';
+
+  static const _accessTokenExpiredCode = 'ACCESS_TOKEN_EXPIRED';
 
   @override
   void onRequest(
