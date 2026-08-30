@@ -53,4 +53,102 @@ final class AuthInterceptor extends Interceptor {
       );
     }
   }
+
+  @override
+  void onError(DioException exception, ErrorInterceptorHandler handler) async {
+    final requestOptions = exception.requestOptions;
+
+    if (!_shouldRefresh(exception)) {
+      handler.next(exception);
+      return;
+    }
+
+    try {
+      final tokenPair = await _tokenRefresher.refreshTokens();
+
+      requestOptions.extra[retryAttemptedKey] = true;
+
+      requestOptions.headers['Authorization'] =
+          'Bearer ${tokenPair.accessToken}';
+
+      final requestData = requestOptions.data;
+
+      if (requestData is FormData) {
+        requestOptions.data = requestData.clone();
+      }
+
+      final response = await _dio.fetch<dynamic>(requestOptions);
+
+      handler.resolve(response);
+    } catch (refreshError, stackTrace) {
+      if (_shouldClearTokens(refreshError)) {
+        await _tokenStorage.clearTokens();
+      }
+
+      if (refreshError is DioException) {
+        handler.reject(refreshError);
+        return;
+      }
+
+      handler.reject(
+        DioException(
+          requestOptions: requestOptions,
+          type: DioExceptionType.unknown,
+          error: refreshError,
+          stackTrace: stackTrace,
+          message: '토큰 재발급에 실패했습니다.',
+        ),
+      );
+    }
+  }
+
+  bool _shouldRefresh(DioException exception) {
+    final requestOptions = exception.requestOptions;
+
+    final requiresAuth = requestOptions.extra[requiresAuthKey] as bool? ?? true;
+
+    final retryAttempted =
+        requestOptions.extra[retryAttemptedKey] as bool? ?? false;
+
+    final isUnauthorized = exception.response?.statusCode == 401;
+    final errorCode = _readErrorCode(exception.response?.data);
+
+    final isRefreshableError =
+        errorCode == null || errorCode == _accessTokenExpiredCode;
+
+    return requiresAuth &&
+        !retryAttempted &&
+        isUnauthorized &&
+        isRefreshableError;
+  }
+
+  String? _readErrorCode(dynamic data) {
+    if (data is! Map) {
+      return null;
+    }
+
+    final error = data['error'];
+
+    if (error is! Map) {
+      return null;
+    }
+
+    final code = error['code'];
+
+    return code is String ? code : null;
+  }
+
+  bool _shouldClearTokens(Object error) {
+    if (error is StateError) {
+      return true;
+    }
+
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+
+      return statusCode == 401 || statusCode == 403;
+    }
+
+    return false;
+  }
 }
